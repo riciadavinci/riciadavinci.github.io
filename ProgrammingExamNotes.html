@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://localhost:6419/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>ProgrammingExamNotes.md - Grip</title>
+  <link rel="icon" href="http://localhost:6419/__/grip/static/favicon.ico">
+  <link rel="stylesheet" href="./ProgrammingExamNotes.md - Grip_files/behaviors-652d082d70a12b4bfa3056abaf954fd9.css">
+  <link rel="stylesheet" href="./ProgrammingExamNotes.md - Grip_files/frameworks-eca8e21af2622cbcba2c93c67f79baed.css">
+  <link rel="stylesheet" href="./ProgrammingExamNotes.md - Grip_files/github-79cdfb76477047132767e0bc59524be5.css">
+  <link rel="stylesheet" href="./ProgrammingExamNotes.md - Grip_files/octicons.css">
+  <style>
+    /* Page tweaks */
+    .preview-page {
+      margin-top: 64px;
+    }
+    /* User-content tweaks */
+    .timeline-comment-wrapper > .timeline-comment:after,
+    .timeline-comment-wrapper > .timeline-comment:before {
+      content: none;
+    }
+    /* User-content overrides */
+    .discussion-timeline.wide {
+      width: 920px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div id="preview-page" class="preview-page" data-autorefresh-url="/__/grip/refresh/">
+
+    
+
+      <div role="main" class="main-content">
+        <div class="container new-discussion-timeline experiment-repo-nav">
+          <div class="repository-content">
+            <div id="readme" class="readme boxed-group clearfix announce instapaper_body md">
+              
+                <h3>
+                  <span class="octicon octicon-book"></span>
+                  ProgrammingExamNotes.md
+                </h3>
+              
+              <article class="markdown-body entry-content" itemprop="text" id="grip-content">
+                <h2>
+<a id="user-content-programming-exercise-1" class="anchor" href="http://localhost:6419/#programming-exercise-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Programming Exercise 1:</h2>
+<p>Implement incomplete Cholesky (<code>incompleteCholesky.m</code>) [Algorithm 11.2 - Page 119] and Preconditioned CG Solver (<code>precCGSolver.m</code>) [Algorithm 11.1 - page 119]</p>
+<p>Already Provided: <code>LLTSolver.m</code></p>
+<h4>
+<a id="user-content-incompletecholesky" class="anchor" href="http://localhost:6419/#incompletecholesky" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>incompleteCholesky</h4>
+<div class="highlight highlight-source-matlab"><pre><span class="pl-k">function</span> [<span class="pl-v">L</span>] = <span class="pl-en">incompleteCholesky</span>(<span class="pl-v">A</span>,<span class="pl-v">lambda</span>,<span class="pl-v">delta</span>)
+<span class="pl-c"><span class="pl-c">%</span> step 1: Input Matrix A^nxn, lambda &gt; 0, delta &gt; 0;</span>
+<span class="pl-c"><span class="pl-c">%</span> step 2</span>
+  <span class="pl-k">for</span> k = <span class="pl-c1">1</span>:n
+
+    <span class="pl-c"><span class="pl-c">%</span> step 2.1</span>
+    A(k,k) = sqrt(max(A(k,k), lambda));
+
+    <span class="pl-c"><span class="pl-c">%</span> step 2.2</span>
+    <span class="pl-k">for</span> i = k+<span class="pl-c1">1</span>:n
+      <span class="pl-c"><span class="pl-c">%</span> step 2.2.1</span>
+      <span class="pl-k">if</span> abs(A(i,k)) <span class="pl-k">&gt;</span> delta
+        A(i,k) = A(i,k) <span class="pl-k">/</span> A(k,k);
+      
+
+      <span class="pl-c"><span class="pl-c">%</span> step 2.2.2</span>
+      <span class="pl-k">else</span>
+        A(i,k) = <span class="pl-c1">0</span>;
+      <span class="pl-k">end</span>
+    <span class="pl-k">end</span>
+
+    <span class="pl-c"><span class="pl-c">%</span> step 2.3</span>
+    <span class="pl-k">for</span> j = k+<span class="pl-c1">1</span>:n
+      <span class="pl-c"><span class="pl-c">%</span> step 2.3.1</span>
+      <span class="pl-k">for</span> i = j:n
+        <span class="pl-k">if</span> abs(A(i,j)) <span class="pl-k">&gt;</span> delta
+          A(i,j) = A(i,j) <span class="pl-k">-</span> (A(i,k) <span class="pl-k">*</span> A(j,k));
+      <span class="pl-k">end</span>
+    <span class="pl-k">end</span>
+  <span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> endfor </span>
+  
+  <span class="pl-c"><span class="pl-c">%</span> step 3</span>
+  <span class="pl-k">for</span> i = <span class="pl-c1">1</span>:n
+    <span class="pl-c"><span class="pl-c">%</span> step 3.1</span>
+    <span class="pl-k">for</span> j = i+<span class="pl-c1">1</span>:n
+      A(i,j) = <span class="pl-c1">0</span>;
+    <span class="pl-k">end</span>
+  <span class="pl-k">end</span>
+
+  <span class="pl-c"><span class="pl-c">%</span> step 4</span>
+  L = A;
+<span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> function</span></pre></div>
+<p><a href="./ProgrammingExamNotes.md - Grip_files/incompleteCholesky.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/incompleteCholesky.png" alt="incompleteCholesky implementation" style="max-width:100%;"></a></p>
+<h4>
+<a id="user-content-preccgsolver" class="anchor" href="http://localhost:6419/#preccgsolver" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>PrecCGSolver</h4>
+<div class="highlight highlight-source-matlab"><pre><span class="pl-k">function</span> [<span class="pl-v">x</span>] = <span class="pl-en">PrecCGSolver</span>(<span class="pl-v">A</span>,<span class="pl-v">b</span>,<span class="pl-v">delta</span>)
+
+<span class="pl-c"><span class="pl-c">%</span> step 2</span>
+  L = incompleteCholesky(A,lambda,delta);
+
+  <span class="pl-c"><span class="pl-c">%</span> step 3</span>
+  <span class="pl-c"><span class="pl-c">%</span> xj = b;</span>
+  <span class="pl-c"><span class="pl-c">%</span> or</span>
+  xj = LLTSolver(L,b);
+  rj = (A*xj) <span class="pl-k">-</span> b;
+
+  dj = -<span class="pl-c1">1</span> <span class="pl-k">*</span> LLTSolver(L,rj);
+  
+  <span class="pl-c"><span class="pl-c">%</span> step 4</span>
+  <span class="pl-k">while</span> (norm(rj,<span class="pl-c1">2</span>) <span class="pl-k">&gt;</span> delta)
+    <span class="pl-c"><span class="pl-c">%</span> step 4.1</span>
+    ADj = A*dj;
+
+    <span class="pl-c"><span class="pl-c">%</span> step 4.2</span>
+    rhoj = (dj<span class="pl-k">'</span>) <span class="pl-k">*</span> ADj;
+
+    <span class="pl-c"><span class="pl-c">%</span> step 4.3</span>
+    tj = ((rj<span class="pl-k">'</span>) <span class="pl-k">*</span> LLTSolver(L,rj)) <span class="pl-k">/</span> rhoj;
+
+    <span class="pl-c"><span class="pl-c">%</span> step 4.4</span>
+    xj = xj <span class="pl-k">+</span> tj <span class="pl-k">*</span> dj;
+
+    <span class="pl-c"><span class="pl-c">%</span> step 4.5</span>
+    rold = rj;
+
+    <span class="pl-c"><span class="pl-c">%</span> step 4.6</span>
+    rj = rold <span class="pl-k">+</span> tj <span class="pl-k">*</span> ADj;
+
+    <span class="pl-c"><span class="pl-c">%</span> step 4.7</span>
+    Betaj = ((rj<span class="pl-k">'</span>) <span class="pl-k">*</span> LLTSolver(L,rj)) <span class="pl-k">/</span> ((rold<span class="pl-k">'</span>) <span class="pl-k">*</span> LLTSolver(L,rold));
+
+    <span class="pl-c"><span class="pl-c">%</span> step 4.8</span>
+    dj = (-<span class="pl-c1">1</span> <span class="pl-k">*</span> LLTSolver(L,rj)) <span class="pl-k">+</span> (Betaj <span class="pl-k">*</span> dj);
+
+    <span class="pl-c"><span class="pl-c">%</span> incrementing iteration counter</span>
+    ++countIter;
+
+  endwhile
+
+  <span class="pl-c"><span class="pl-c">%</span> step 5</span>
+  x = xj;
+
+<span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> function</span></pre></div>
+<p><a href="./ProgrammingExamNotes.md - Grip_files/PrecCGSolver.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/PrecCGSolver.png" alt="PrecCGSolver implementation" style="max-width:100%;"></a></p>
+<p><em>Note: Requires LLTSolver and PrecCGSolver</em></p>
+<h2>
+<a id="user-content-programming-exercise-2" class="anchor" href="http://localhost:6419/#programming-exercise-2" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Programming Exercise 2:</h2>
+<p>Implementation of Wolfe Powell Search [Algorithm 4.10] and Global Newton Descent [Algorithm 4.13]</p>
+<p><em>Note: Using anonymous functions in WolfePowellSearch</em></p>
+<h4>
+<a id="user-content-wolfepowellsearch" class="anchor" href="http://localhost:6419/#wolfepowellsearch" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>WolfePowellSearch</h4>
+<div class="highlight highlight-source-matlab"><pre><span class="pl-k">function</span> [<span class="pl-v">t</span>] = <span class="pl-en">WolfePowellSearch</span>(<span class="pl-v">f</span>, <span class="pl-v">x</span>, <span class="pl-v">d</span>, <span class="pl-v">sigma</span>, <span class="pl-v">rho</span>)
+<span class="pl-c"><span class="pl-c">%%</span> Implementation:</span>
+  <span class="pl-c"><span class="pl-c">%</span> Hints: </span>
+  <span class="pl-c"><span class="pl-c">%</span> 1. Whenever t changes, you need to update the objective value and</span>
+  <span class="pl-c"><span class="pl-c">%</span> mygradient properly!</span>
+  <span class="pl-c"><span class="pl-c">%</span> 2. Use the return keyword (see documentation)</span>
+  <span class="pl-k">if</span> verbose
+    disp(<span class="pl-s"><span class="pl-pds">'</span>Start WolfePowellSearch...<span class="pl-pds">'</span></span>);
+  <span class="pl-k">end</span>
+      
+<span class="pl-c"><span class="pl-c">%</span>Complete the code</span>
+  <span class="pl-c"><span class="pl-c">%</span> Copying x to x_k and d to d_k</span>
+  x_k = x;
+  d_k = d;
+
+  <span class="pl-c"><span class="pl-c">%</span> Updating value and mygradient</span>
+  
+  <span class="pl-c"><span class="pl-c">%</span> Custom Step (Helper Function for getting Gradient from f(x))</span>
+  gradf = @(x) nthargout(<span class="pl-c1">2</span>,f,x);
+
+  <span class="pl-c"><span class="pl-c">%</span> Step 3: Defining Wolfe Powell Condition 1</span>
+  <span class="pl-c"><span class="pl-c">%</span> W1 = @(t) f((x_k + t*d_k)) &lt;= ( f(x_k) + (t * sigma * (gradf(x_k))' * d) );   % Non-value storing version</span>
+  W1 = @(t) f((x_k <span class="pl-k">+</span> t*d_k)) <span class="pl-k">&lt;=</span> ( value <span class="pl-k">+</span> (t <span class="pl-k">*</span> sigma <span class="pl-k">*</span> mygradient<span class="pl-k">'</span> <span class="pl-k">*</span> d) );   <span class="pl-c"><span class="pl-c">%</span> Value storing version  </span>
+  
+  <span class="pl-c"><span class="pl-c">%</span> Step 4: Defining Wolfe Powell Condition 2</span>
+  W2 = @(t) ((gradf((x_k <span class="pl-k">+</span> t <span class="pl-k">*</span> d_k)))<span class="pl-k">'</span> <span class="pl-k">*</span> d_k) <span class="pl-k">&gt;=</span> (rho <span class="pl-k">*</span> mygradient<span class="pl-k">'</span> <span class="pl-k">*</span> d_k);
+
+  <span class="pl-c"><span class="pl-c">%</span> step 5: Setting t = 1</span>
+  t = <span class="pl-c1">1</span>;
+
+  <span class="pl-c"><span class="pl-c">%</span> declaring and initializing t_ and t+</span>
+  t_n = t;
+  t_p = t;
+
+  <span class="pl-c"><span class="pl-c">%</span> Step 6:</span>
+
+  <span class="pl-c"><span class="pl-c">%</span> step 6: backtracking</span>
+  <span class="pl-k">if</span> (W1(t) <span class="pl-k">==</span> <span class="pl-c1">false</span>)
+    <span class="pl-c"><span class="pl-c">%</span> step 6(a):</span>
+    t = t/<span class="pl-c1">2</span>;
+    x_k = x_k <span class="pl-k">+</span> t <span class="pl-k">*</span> d_k; 
+    [value, mygradient] = f(x_k);
+    
+    <span class="pl-c"><span class="pl-c">%</span> step 6(b):</span>
+    <span class="pl-k">while</span>(W1(t) <span class="pl-k">==</span> <span class="pl-c1">false</span>)
+      t = t/<span class="pl-c1">2</span>;
+      x_k = x_k <span class="pl-k">+</span> t <span class="pl-k">*</span> d_k;
+      [value, mygradient] = f(x_k);
+    endwhile
+    
+    <span class="pl-c"><span class="pl-c">%</span> step 6(c): setting t_ and t+</span>
+    t_n = t; t_p = <span class="pl-c1">2</span>*t;
+  
+  <span class="pl-c"><span class="pl-c">%</span> step 7: If t = 1 satisfies Wolfe Powell Condition 2</span>
+  elseif (W2(t) <span class="pl-k">==</span> <span class="pl-c1">true</span>)
+    <span class="pl-k">return</span>
+  
+  <span class="pl-c"><span class="pl-c">%</span> step 8: fronttracking</span>
+  else
+    <span class="pl-c"><span class="pl-c">%</span> step 8(a)</span>
+    t = <span class="pl-c1">2</span>*t;
+    x_k = x_k <span class="pl-k">+</span> t <span class="pl-k">*</span> d_k;
+    [value, mygradient] = f(x_k);
+    
+    <span class="pl-c"><span class="pl-c">%</span> step 8(b):</span>
+    <span class="pl-k">while</span> (W1(t) <span class="pl-k">==</span> <span class="pl-c1">true</span>)
+      t = <span class="pl-c1">2</span>*t; 
+      x_k = x_k <span class="pl-k">+</span> t <span class="pl-k">*</span> d_k;
+      [value, mygradient] = f(x_k);
+    endwhile
+    
+    <span class="pl-c"><span class="pl-c">%</span> step 8(c): setting t_ and t+</span>
+    t_n = t/<span class="pl-c1">2</span>; t_p = t;
+
+  <span class="pl-k">end</span>
+
+  <span class="pl-c"><span class="pl-c">%</span> step 9:</span>
+  t = t_n;
+  x_k = x_k <span class="pl-k">+</span> t <span class="pl-k">*</span> d_k;
+  [value, mygradient] = f(x_k);
+
+  <span class="pl-c"><span class="pl-c">%</span> step 10: refining</span>
+  <span class="pl-k">while</span> (W2(t) <span class="pl-k">==</span> <span class="pl-c1">false</span>)
+    <span class="pl-c"><span class="pl-c">%</span>step 10(a):</span>
+    t = (t_n <span class="pl-k">+</span> t_p) <span class="pl-k">/</span> <span class="pl-c1">2</span>;
+    x_k = x_k <span class="pl-k">+</span> t <span class="pl-k">*</span> d_k;
+    [value, mygradient] = f(x_k);
+
+    <span class="pl-c"><span class="pl-c">%</span> step 10(b):</span>
+    <span class="pl-k">if</span> (W1(t) <span class="pl-k">==</span> <span class="pl-c1">true</span>)
+      t_n = t;
+    <span class="pl-k">else</span>
+      t_p = t;
+    <span class="pl-k">end</span>
+  endwhile
+
+  <span class="pl-c"><span class="pl-c">%</span> step 11:</span>
+  t = t_n;
+
+<span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> function</span></pre></div>
+<p><a href="./ProgrammingExamNotes.md - Grip_files/WolfePowellSearch.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/WolfePowellSearch.png" alt="WolfePowellSearch implementation" style="max-width:100%;"></a></p>
+<h4>
+<a id="user-content-global-newton-descent--algorithm" class="anchor" href="http://localhost:6419/#global-newton-descent--algorithm" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>(Global Newton) Descent  Algorithm</h4>
+<div class="highlight highlight-source-matlab"><pre><span class="pl-k">function</span> [<span class="pl-v">xmin</span>] = <span class="pl-en">globalNewtonDescent</span>(<span class="pl-v">f</span>, <span class="pl-v">x0</span>, <span class="pl-v">eps</span>)
+<span class="pl-c"><span class="pl-c">%</span> Step 1: Import twice continuously differentiable function, x0, and eps</span>
+
+<span class="pl-c"><span class="pl-c">%</span> step 2: setting x_k</span>
+x_k = x0;
+
+d_k = [<span class="pl-c1">0.0</span>,<span class="pl-c1">0.0</span>];
+
+<span class="pl-c"><span class="pl-c">%</span> updating value, mygradient and hessian:</span>
+[value, mygradient, hessian] = f(x_k);
+
+<span class="pl-c"><span class="pl-c">%</span> step 3:</span>
+<span class="pl-k">while</span> (norm(mygradient, <span class="pl-c1">2</span>) <span class="pl-k">&gt;</span> <span class="pl-c1">eps</span>)
+    <span class="pl-c"><span class="pl-c">%</span> step 3.1: solving for d_k using PrecCGSolver</span>
+    d_k = PrecCGSolver(hessian, -mygradient, delta, <span class="pl-c1">false</span>);
+
+    <span class="pl-c"><span class="pl-c">%</span> step 3.2: Lemma 4.5 Descent Direction Check</span>
+    <span class="pl-k">if</span> (((mygradient<span class="pl-k">'</span>) <span class="pl-k">*</span> d_k) <span class="pl-k">&gt;=</span> <span class="pl-c1">0</span>)
+        d_k = -mygradient;
+    <span class="pl-k">end</span>
+
+    <span class="pl-c"><span class="pl-c">%</span> step 3.3: finding step-size t_k using Wolfe Powell</span>
+    t_k = WolfePowellSearch(f, x_k, d_k, sigma, rho, <span class="pl-c1">false</span>);
+
+    <span class="pl-c"><span class="pl-c">%</span> step 3.4: setting x_k</span>
+    x_k = x_k <span class="pl-k">+</span> (t_k <span class="pl-k">*</span> d_k);
+    [value, mygradient, hessian] = f(x_k);
+
+<span class="pl-k">end</span>
+
+<span class="pl-c"><span class="pl-c">%</span> step 4:</span>
+xmin = x_k;
+
+<span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> function</span></pre></div>
+<p><strong>Global Newton Descent Modifications</strong>:
+<a href="./ProgrammingExamNotes.md - Grip_files/globalNewtonDescentModifications.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/globalNewtonDescentModifications.png" alt="globalNewtonDescent modifications" style="max-width:100%;"></a></p>
+<p><a href="./ProgrammingExamNotes.md - Grip_files/DescentAlgorithm.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/DescentAlgorithm.png" alt="DescentAlgorithm implementation" style="max-width:100%;"></a></p>
+<h2>
+<a id="user-content-programming-exercise-3" class="anchor" href="http://localhost:6419/#programming-exercise-3" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Programming Exercise 3:</h2>
+<p>Implementation of projectedNewtonDescent [Algorithm 4.18] and BFGSDescent [Algorithm 6.7]</p>
+<h4>
+<a id="user-content-projectednewtondescent" class="anchor" href="http://localhost:6419/#projectednewtondescent" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>projectedNewtonDescent</h4>
+<div class="highlight highlight-source-matlab"><pre><span class="pl-k">function</span> [<span class="pl-v">xmin</span>] = <span class="pl-en">projectedNewtonDescent</span>(<span class="pl-v">f</span>, <span class="pl-v">P</span>, <span class="pl-v">x0</span>, <span class="pl-v">eps</span>)
+<span class="pl-c"><span class="pl-c">%%</span> Required files:</span>
+<span class="pl-c"><span class="pl-c">%</span> [x] = PrecCGSolver(A,b,delta)</span>
+<span class="pl-c"><span class="pl-c">%</span> [t] = projectedBacktrackingSearch(f, P, x, d, sigma)</span>
+
+<span class="pl-c"><span class="pl-c">%%</span> Implementation:</span>
+<span class="pl-c"><span class="pl-c">%</span> Hints:</span>
+<span class="pl-c"><span class="pl-c">%</span> 1. Whenever x changes, you need to update dependend values properly!</span>
+<span class="pl-c"><span class="pl-c">%</span> 2. Use [x,A] = P(x0) to get the current projected point and its active</span>
+<span class="pl-c"><span class="pl-c">%</span> set</span>
+<span class="pl-c"><span class="pl-c">%</span> 3. Hint for matrix reduction: You can access and overwrite specific</span>
+<span class="pl-c"><span class="pl-c">%</span> rows/columns of a matrix by special calls. Execute the following example</span>
+<span class="pl-c"><span class="pl-c">%</span> to get the idea:</span>
+<span class="pl-c"><span class="pl-c">%</span></span>
+<span class="pl-c"><span class="pl-c">%</span> L = [1 2 3; 4 5 6; 7 8 9]</span>
+<span class="pl-c"><span class="pl-c">%</span> R = [10 10 10; 10 10 10; 10 10 10 ]</span>
+<span class="pl-c"><span class="pl-c">%</span> index = [1 3]</span>
+<span class="pl-c"><span class="pl-c">%</span> L(:,index)=R(:,index)</span>
+<span class="pl-c"><span class="pl-c">%</span> R(index,:)=L(index,:)</span>
+<span class="pl-c"><span class="pl-c">%</span></span>
+<span class="pl-c"><span class="pl-c">%</span> 4. eye generates a unit matrix.</span>
+<span class="pl-c"><span class="pl-c">%</span></span>
+<span class="pl-c"><span class="pl-c">%</span> 5. Keep track of the iterations with</span>
+<span class="pl-c"><span class="pl-c">%</span> if verbose</span>
+<span class="pl-c"><span class="pl-c">%</span>   countIter=countIter+1;</span>
+<span class="pl-c"><span class="pl-c">%</span> end</span>
+
+<span class="pl-c"><span class="pl-c">%</span>static</span>
+delta=<span class="pl-c1">1.0e-6</span>;
+sigma=<span class="pl-c1">1.0e-4</span>;
+n=length(x0);
+
+<span class="pl-c"><span class="pl-c">%</span> COMPLETE THE CODE</span>
+
+<span class="pl-c"><span class="pl-c">%</span> % Step 2: It is already done by Prof. Hild in the try catch block above!</span>
+<span class="pl-c"><span class="pl-c">%</span> [x_k, activeIdx] = P(x0);</span>
+<span class="pl-c"><span class="pl-c">%</span> [value, mygradient, hessian] = f(x_k);</span>
+
+
+x_k = x;
+activeIdx = A;
+<span class="pl-c"><span class="pl-c">%</span> Default step-size for Newton Type Methods!</span>
+<span class="pl-c"><span class="pl-c">%</span> t_k = 1;</span>
+
+E = eye(n);
+
+<span class="pl-c"><span class="pl-c">%</span> Step 3:</span>
+<span class="pl-c"><span class="pl-c">%</span> norm(xmin - P(xmin - gradf(xmin)))&lt;=eps</span>
+<span class="pl-k">while</span> (norm(x_k <span class="pl-k">-</span> P(x_k <span class="pl-k">-</span> mygradient)) <span class="pl-k">&gt;</span> <span class="pl-c1">eps</span>)
+    <span class="pl-c"><span class="pl-c">%</span> Step 3a:</span>
+    hessian(:,activeIdx) = E(:,activeIdx);
+    hessian(activeIdx,:) = E(activeIdx,:);
+
+    <span class="pl-c"><span class="pl-c">%</span> Step 3b:</span>
+    d_k = PrecCGSolver(hessian, -mygradient, delta, <span class="pl-c1">false</span>);
+    <span class="pl-c"><span class="pl-c">%</span> descent direction check</span>
+    <span class="pl-k">if</span> (((mygradient<span class="pl-k">'</span>) <span class="pl-k">*</span> d_k) <span class="pl-k">&gt;=</span> <span class="pl-c1">0</span>)
+        d_k = -mygradient;
+    <span class="pl-k">end</span>
+
+    <span class="pl-c"><span class="pl-c">%</span> Step 3c:</span>
+    t_k = projectedBacktrackingSearch(f, P, x_k, d_k, sigma, <span class="pl-c1">false</span>);
+
+    <span class="pl-c"><span class="pl-c">%</span> Step 3d:</span>
+    [x_k, activeIdx] = P(x_k <span class="pl-k">+</span> t_k <span class="pl-k">*</span> d_k);
+    [value, mygradient, hessian] = f(x_k);
+
+    <span class="pl-k">if</span> verbose
+        countIter=countIter+<span class="pl-c1">1</span>;
+    <span class="pl-k">end</span>
+
+<span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> while</span>
+
+<span class="pl-c"><span class="pl-c">%</span> Step 4:</span>
+xmin = x_k;
+
+<span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> function</span></pre></div>
+<p><strong>Projected Newton Descent Modifications</strong>:
+<a href="./ProgrammingExamNotes.md - Grip_files/projectedNewtonDescentModifications.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/projectedNewtonDescentModifications.png" alt="projectedNewtonDescent modifications" style="max-width:100%;"></a></p>
+<p><a href="./ProgrammingExamNotes.md - Grip_files/projectedNewtonDescent.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/projectedNewtonDescent.png" alt="projectedNewtonDescent implementation" style="max-width:100%;"></a></p>
+<h4>
+<a id="user-content-bfgsdescent" class="anchor" href="http://localhost:6419/#bfgsdescent" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>BFGSDescent</h4>
+<div class="highlight highlight-source-matlab"><pre><span class="pl-k">function</span> [<span class="pl-v">xmin</span>] = <span class="pl-en">BFGSDescent</span>(<span class="pl-v">f</span>, <span class="pl-v">x0</span>, <span class="pl-v">eps</span>)
+
+<span class="pl-c"><span class="pl-c">%%</span> Required files:</span>
+<span class="pl-c"><span class="pl-c">%</span> [t] = WolfePowellSearch(f, x, d, sigma, rho)</span>
+
+<span class="pl-c"><span class="pl-c">%%</span> Implementation:</span>
+<span class="pl-c"><span class="pl-c">%</span> Hints:</span>
+<span class="pl-c"><span class="pl-c">%</span> 1. Whenever x changes, you need to update related variables properly!</span>
+<span class="pl-c"><span class="pl-c">%</span> 2. eye generates a unit matrix.</span>
+<span class="pl-c"><span class="pl-c">%</span> 3. Keep track of the iterations with</span>
+<span class="pl-c"><span class="pl-c">%</span> if verbose</span>
+<span class="pl-c"><span class="pl-c">%</span>   countIter=countIter+1;</span>
+<span class="pl-c"><span class="pl-c">%</span> end</span>
+
+<span class="pl-c"><span class="pl-c">%</span> Step 1: Input continuously differentiable objective, x0, &amp; eps</span>
+
+<span class="pl-c"><span class="pl-c">%</span>dynamic</span>
+<span class="pl-c"><span class="pl-c">%</span> Step 2:</span>
+x_k = x0;
+B = E;
+
+<span class="pl-c"><span class="pl-c">%</span> COMPLETE THE CODE</span>
+[value, mygradient] = f(x_k);
+
+<span class="pl-c"><span class="pl-c">%</span> Helper Function for getting gradient:</span>
+<span class="pl-c"><span class="pl-c">%</span> gradf = @(x) nthargout(2, f, x);</span>
+
+<span class="pl-c"><span class="pl-c">%</span> Step 3:</span>
+<span class="pl-k">while</span>(norm(mygradient) <span class="pl-k">&gt;</span> <span class="pl-c1">eps</span>)
+    <span class="pl-c"><span class="pl-c">%</span> Step 3a:</span>
+    d_k = -B <span class="pl-k">*</span> mygradient;
+
+    <span class="pl-c"><span class="pl-c">%</span> descent direction check before calling WolfePowell</span>
+    <span class="pl-k">if</span>(((mygradient<span class="pl-k">'</span>) <span class="pl-k">*</span> d_k) <span class="pl-k">&gt;=</span> <span class="pl-c1">0</span>)
+        d_k = -mygradient;
+        B = E;
+    <span class="pl-k">end</span>
+
+    <span class="pl-c"><span class="pl-c">%</span> Step 3b:</span>
+    t_k = WolfePowellSearch(f, x_k, d_k, sigma, rho, <span class="pl-c1">false</span>);
+
+    <span class="pl-c"><span class="pl-c">%</span> Step 3c:</span>
+    <span class="pl-c"><span class="pl-c">%</span> mygradient_new = gradf(x_k + t_k*d_k);</span>
+    [~, mygradient_new] = f(x_k <span class="pl-k">+</span> t_k <span class="pl-k">*</span> d_k);
+    delta_g_k =  mygradient_new <span class="pl-k">-</span> mygradient;
+    delta_x_k = t_k <span class="pl-k">*</span> d_k;
+
+    <span class="pl-c"><span class="pl-c">%</span> Step 3d:</span>
+    x_k = x_k <span class="pl-k">+</span> delta_x_k;
+    [value, mygradient] = f(x_k);    
+
+    <span class="pl-c"><span class="pl-c">%</span> Step 3e:</span>
+    r_k = delta_x_k <span class="pl-k">-</span> B <span class="pl-k">*</span> delta_g_k;
+    B = B <span class="pl-k">+</span> ((r_k <span class="pl-k">*</span> delta_x_k<span class="pl-k">'</span> <span class="pl-k">+</span> delta_x_k <span class="pl-k">*</span> r_k<span class="pl-k">'</span>)/(delta_g_k<span class="pl-k">'</span> <span class="pl-k">*</span> delta_x_k)) <span class="pl-k">-</span> ((r_k<span class="pl-k">'</span> <span class="pl-k">*</span> delta_g_k)/(delta_g_k<span class="pl-k">'</span> <span class="pl-k">*</span> delta_x_k)^2) <span class="pl-k">*</span> delta_x_k*delta_x_k<span class="pl-k">'</span>;
+
+    <span class="pl-k">if</span> verbose
+      countIter=countIter+<span class="pl-c1">1</span>;
+    <span class="pl-k">end</span>
+
+endwhile
+
+<span class="pl-c"><span class="pl-c">%</span> Step 4:</span>
+xmin = x_k;
+
+<span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> function</span></pre></div>
+<p><strong>BFGSDescent Modifications</strong>:
+<a href="./ProgrammingExamNotes.md - Grip_files/BFGSDescentModifications.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/BFGSDescentModifications.png" alt="BFGSDescent modifications" style="max-width:100%;"></a></p>
+<p><a href="./ProgrammingExamNotes.md - Grip_files/BFGSDescent.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/BFGSDescent.png" alt="BFGSDescent implementation" style="max-width:100%;"></a></p>
+<p><em>Lemma 6.6:</em>
+<a href="./ProgrammingExamNotes.md - Grip_files/Lemma_6_6.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/Lemma_6_6.png" alt="Lemma 6.6" style="max-width:100%;"></a></p>
+<h2>
+<a id="user-content-programming-exercise-4" class="anchor" href="http://localhost:6419/#programming-exercise-4" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Programming Exercise 4:</h2>
+<p>Implementation of leastSquaresObjective and Levenberg Marquard Descent (levMarqDescent) [Algorithm 6.14]</p>
+<h4>
+<a id="user-content-leastsquaresobjective" class="anchor" href="http://localhost:6419/#leastsquaresobjective" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>leastSquaresObjective</h4>
+<div class="highlight highlight-source-matlab"><pre><span class="pl-k">function</span> [<span class="pl-v">errorVector</span>, <span class="pl-v">jacobian</span>] = <span class="pl-en">leastSquaresObjective</span>(<span class="pl-v">model</span>, <span class="pl-v">p</span>, <span class="pl-v">xData</span>, <span class="pl-v">fData</span>)
+
+<span class="pl-c"><span class="pl-c">%%</span> Implementation:</span>
+<span class="pl-c"><span class="pl-c">%</span> Hints: </span>
+<span class="pl-c"><span class="pl-c">%</span> 1. Do a loop over N</span>
+<span class="pl-c"><span class="pl-c">%</span> 2. Each row of the Jacobian is a (transposed) gradient with respect to p of the model</span>
+
+[~,N]=size(xData);
+
+<span class="pl-c"><span class="pl-c">%</span> Error vector</span>
+R = zeros(N,<span class="pl-c1">1</span>);
+
+<span class="pl-c"><span class="pl-c">%</span> Jacobian</span>
+m = size(p);
+J = zeros(N, m);
+
+<span class="pl-k">for</span> i = <span class="pl-c1">1</span>:N
+    R(i) = model(xData(:,i), p) <span class="pl-k">-</span> fData(:,i);
+    [value, gradient_x,gradient_p] = model(xData(:,i),p);
+    J(i,:) = gradient_p<span class="pl-k">'</span>;
+<span class="pl-k">end</span>
+
+errorVector = R;
+jacobian = J;
+
+<span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> function</span></pre></div>
+<p><strong>leastSquaresObjective Hint</strong>:
+<a href="./ProgrammingExamNotes.md - Grip_files/leastSquaresObjectiveHint.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/leastSquaresObjectiveHint.png" alt="leastSquaresObjective hint" style="max-width:100%;"></a></p>
+<h4>
+<a id="user-content-levenberg-marquard-descent-levmarqdescent" class="anchor" href="http://localhost:6419/#levenberg-marquard-descent-levmarqdescent" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Levenberg Marquard Descent (levMarqDescent)</h4>
+<div class="highlight highlight-source-matlab"><pre><span class="pl-k">function</span> [<span class="pl-v">pmin</span>] = <span class="pl-en">levMarqDescent</span>(<span class="pl-v">R</span>, <span class="pl-v">p0</span>, <span class="pl-v">eps</span>, <span class="pl-v">alpha0</span>, <span class="pl-v">beta</span>)
+
+  <span class="pl-c"><span class="pl-c">%%</span> Required files:</span>
+  <span class="pl-c"><span class="pl-c">%</span> [x] = PrecCGSolver(A,b,delta)</span>
+
+  <span class="pl-c"><span class="pl-c">%%</span> Implementation:</span>
+  <span class="pl-c"><span class="pl-c">%</span> Hints: </span>
+  <span class="pl-c"><span class="pl-c">%</span> 1. Remember the connection f = 1/2 R'*R and grad_f = J'*R</span>
+  <span class="pl-c"><span class="pl-c">%</span> 2. Use eye(n) to get the unit matrix.</span>
+
+  [n, ~] = size(p0)
+  E = eye(n);
+
+  <span class="pl-c"><span class="pl-c">%</span> Step 2:</span>
+  p_k = p0;
+  alpha_k = alpha0;
+
+  <span class="pl-c"><span class="pl-c">%</span> Step 3:</span>
+  <span class="pl-k">while</span> norm(jacobian<span class="pl-k">'</span> <span class="pl-k">*</span> errorVector) <span class="pl-k">&gt;</span> <span class="pl-c1">eps</span>
+    <span class="pl-c"><span class="pl-c">%</span> Step 3a:</span>
+    A = (jacobian<span class="pl-k">'</span> <span class="pl-k">*</span> jacobian) <span class="pl-k">+</span> alpha_k <span class="pl-k">*</span> E;
+    b = -<span class="pl-c1">1</span> <span class="pl-k">*</span> jacobian<span class="pl-k">'</span> <span class="pl-k">*</span> errorVector;
+    d_k = PrecCGSolver(A,b,delta,<span class="pl-c1">false</span>);
+
+    <span class="pl-c"><span class="pl-c">%</span> Step 3b:</span>
+    errorVector_new = R(p_k <span class="pl-k">+</span> d_k);
+    <span class="pl-k">if</span> ((<span class="pl-c1">0.5</span> <span class="pl-k">*</span> errorVector_new<span class="pl-k">'</span> <span class="pl-k">*</span> errorVector_new) <span class="pl-k">&lt;</span> (<span class="pl-c1">0.5</span> <span class="pl-k">*</span> errorVector<span class="pl-k">'</span> <span class="pl-k">*</span> errorVector))
+      p_k = p_k <span class="pl-k">+</span> d_k;
+      alpha_k = alpha0;
+      [errorVector, jacobian] = R(p_k);
+      <span class="pl-k">if</span> verbose
+        countIter = countIter <span class="pl-k">+</span> <span class="pl-c1">1</span>;
+      <span class="pl-k">end</span>
+    <span class="pl-c"><span class="pl-c">%</span> Step 3c:</span>
+    <span class="pl-k">else</span>
+      alpha_k = beta <span class="pl-k">*</span> alpha_k;
+    <span class="pl-k">end</span>
+
+  <span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> while</span>
+  
+  <span class="pl-c"><span class="pl-c">%</span> Step 4:</span>
+  pmin = p_k;
+
+
+<span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> function</span></pre></div>
+<p><a href="./ProgrammingExamNotes.md - Grip_files/levMarqDescent.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/levMarqDescent.png" alt="levMarqDescent implementation" style="max-width:100%;"></a></p>
+<h2>
+<a id="user-content-programming-exercise-5" class="anchor" href="http://localhost:6419/#programming-exercise-5" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Programming Exercise 5:</h2>
+<p>Implementation of augmentedLagrangianObjective and augmentedLagrangianDecent [Algorithm 7.4]</p>
+<h4>
+<a id="user-content-augmentedlagrangianobjective" class="anchor" href="http://localhost:6419/#augmentedlagrangianobjective" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>augmentedLagrangianObjective</h4>
+<div class="highlight highlight-source-matlab"><pre><span class="pl-k">function</span> [<span class="pl-v">A_Value</span>, <span class="pl-v">A_Gradient</span>,<span class="pl-v">A_Hessian</span>] = <span class="pl-en">augmentedLagrangianObjective</span>(<span class="pl-v">f</span>, <span class="pl-v">h</span>, <span class="pl-v">x</span>, <span class="pl-v">alpha</span>, <span class="pl-v">gamma</span>)
+
+  <span class="pl-c"><span class="pl-c">%%</span> Implementation:  </span>
+  <span class="pl-c"><span class="pl-c">%</span> Hints:</span>
+  <span class="pl-c"><span class="pl-c">%</span> 1. nabla(h(x)^2) is 2*h(x)*nabla(h(x))</span>
+  <span class="pl-c"><span class="pl-c">%</span> 2. nabla^2(h(x)^2) is nabla(2*h(x)*nabla(h(x))) is 2*h(x)*nabla^2(h(x))+2*nabla(h(x))*nabla(h(x))'</span>
+   
+  <span class="pl-c"><span class="pl-c">%</span> COMPLETE THE CODE</span>
+
+  <span class="pl-c"><span class="pl-c">%</span> A_Value</span>
+  A_Value = f(x) <span class="pl-k">+</span> alpha*h(x)+ <span class="pl-c1">0.5</span>*gamma*h(x)^2;
+  
+  <span class="pl-c"><span class="pl-c">%</span> A_Gradient</span>
+  A_Gradient = fgradient <span class="pl-k">+</span> ((alpha <span class="pl-k">+</span> (gamma <span class="pl-k">*</span> hvalue)) <span class="pl-k">*</span> hgradient);
+
+  <span class="pl-c"><span class="pl-c">%</span> A_Hessian</span>
+  A_Hessian = fhessian <span class="pl-k">+</span> ((alpha <span class="pl-k">+</span> (gamma*hvalue))*hhessian) <span class="pl-k">+</span> (gamma <span class="pl-k">*</span> (hgradient <span class="pl-k">*</span> hgradient<span class="pl-k">'</span>));
+
+<span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> function</span></pre></div>
+<p><strong>augmentedLagrangianObjective Hint</strong>:
+<a href="./ProgrammingExamNotes.md - Grip_files/augmentedLagrangianObjectiveHint.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/augmentedLagrangianObjectiveHint.png" alt="augmentedLagrangianObjective hint" style="max-width:100%;"></a></p>
+<h4>
+<a id="user-content-augmentedlagrangiandecent" class="anchor" href="http://localhost:6419/#augmentedlagrangiandecent" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>augmentedLagrangianDecent</h4>
+<div class="highlight highlight-source-matlab"><pre><span class="pl-k">function</span> [<span class="pl-v">xmin</span>, <span class="pl-v">lambda</span>] = <span class="pl-en">augmentedLagrangianDescent</span>(<span class="pl-v">f</span>, <span class="pl-v">P</span>, <span class="pl-v">h</span>, <span class="pl-v">x0</span>, <span class="pl-v">alpha0</span>, <span class="pl-v">eps</span>, <span class="pl-v">delta</span>)
+
+  <span class="pl-c"><span class="pl-c">%%</span> Required files:</span>
+  <span class="pl-c"><span class="pl-c">%</span> [xmin_k] = projectedNewtonDescent(f, P, x0, eps)</span>
+  <span class="pl-c"><span class="pl-c">%</span> [A_value, A_gradient, A_hessian] = augmentedLagrangianObjective(f, h, x, alpha, gamma)</span>
+
+  <span class="pl-c"><span class="pl-c">%%</span> Implementation:</span>
+  <span class="pl-c"><span class="pl-c">%</span> Hints:</span>
+  <span class="pl-c"><span class="pl-c">%</span> 1. do not confuse eps_k (tolerance for projectedNewtonDescent) and eps (tolerance for outer loop)</span>
+  <span class="pl-c"><span class="pl-c">%</span> 2. do not forget to update all depended variables (like Agradient) when</span>
+  <span class="pl-c"><span class="pl-c">%</span> x changes and use augmentedLagrangianObjective after the changes of</span>
+  <span class="pl-c"><span class="pl-c">%</span> alphak, gammak to update the augmented Lagrangian Ak.</span>
+
+  <span class="pl-c"><span class="pl-c">%</span> Step 2:</span>
+  <span class="pl-c"><span class="pl-c">%</span>dynamic</span>
+  xk = P(x0);
+  hk = h(xk);
+  alphak = alpha0;
+  gammak = <span class="pl-c1">10</span>;
+  Ak = @(x)augmentedLagrangianObjective(f, h, x, alphak, gammak);
+  [Avalue, Agradient] = Ak(xk);
+  epsk = <span class="pl-c1">1</span> <span class="pl-k">/</span> gammak;
+  deltak = epsk^0.1;
+    
+  <span class="pl-c"><span class="pl-c">%</span> Step 3:</span>
+  [Avalue, Agradient] = Ak(xk);
+
+  <span class="pl-c"><span class="pl-c">%</span> Step 4:</span>
+  <span class="pl-k">while</span> ((norm(xk <span class="pl-k">-</span> P(xk <span class="pl-k">-</span> Agradient)) <span class="pl-k">&gt;</span> <span class="pl-c1">eps</span>) <span class="pl-k">||</span> (norm(hk) <span class="pl-k">&gt;</span> delta))
+    <span class="pl-c"><span class="pl-c">%</span> Step 4a:</span>
+    xk = projectedNewtonDescent(@(xk)augmentedLagrangianObjective(f, h, xk, alphak, gammak), P, xk, epsk, <span class="pl-c1">false</span>);
+
+    <span class="pl-c"><span class="pl-c">%</span> Step 4b:</span>
+    <span class="pl-k">if</span>(norm(h(xk)) <span class="pl-k">&lt;=</span> deltak)
+      alphak = alphak <span class="pl-k">+</span> (gammak*h(xk));
+      epsk = max(epsk/gammak, <span class="pl-c1">eps</span>);
+      deltak = max(deltak/(gammak^0.9), delta);
+    
+      <span class="pl-c"><span class="pl-c">%</span> Step 4c:</span>
+    <span class="pl-k">else</span>
+      gammak = max(<span class="pl-c1">10</span>, sqrt(gammak))*gammak;
+      epsk = <span class="pl-c1">1</span>/gammak;
+      deltak = <span class="pl-c1">1</span>/(gammak^0.1);
+    <span class="pl-k">end</span>
+
+    <span class="pl-c"><span class="pl-c">%</span> Step 4d:</span>
+    [Avalue, Agradient] = augmentedLagrangianObjective(f, h, xk, alphak, gammak);
+    hk = h(xk);
+
+    <span class="pl-k">if</span> verbose
+      countIter = countIter <span class="pl-k">+</span> <span class="pl-c1">1</span>;
+    <span class="pl-k">end</span>
+  <span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> while</span>
+
+  <span class="pl-c"><span class="pl-c">%</span> Step 5:</span>
+  xmin=xk;
+  lambda=alphak;
+
+<span class="pl-k">end</span> <span class="pl-c"><span class="pl-c">%</span> function</span></pre></div>
+<p><a href="./ProgrammingExamNotes.md - Grip_files/augmentedLagrangianDecent.png" target="_blank" rel="noopener noreferrer"><img src="./ProgrammingExamNotes.md - Grip_files/augmentedLagrangianDecent.png" alt="augmentedLagrangianDecent implementation" style="max-width:100%;"></a></p>
+<hr>
+
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    
+
+  </div>
+  <div>&nbsp;</div>
+  </div><script>
+    function showCanonicalImages() {
+      var images = document.getElementsByTagName('img');
+      if (!images) {
+        return;
+      }
+      for (var index = 0; index < images.length; index++) {
+        var image = images[index];
+        if (image.getAttribute('data-canonical-src') && image.src !== image.getAttribute('data-canonical-src')) {
+          image.src = image.getAttribute('data-canonical-src');
+        }
+      }
+    }
+
+    function scrollToHash() {
+      if (location.hash && !document.querySelector(':target')) {
+        var element = document.getElementById('user-content-' + location.hash.slice(1));
+        if (element) {
+           element.scrollIntoView();
+        }
+      }
+    }
+
+    function autorefreshContent(eventSourceUrl) {
+      var initialTitle = document.title;
+      var contentElement = document.getElementById('grip-content');
+      var source = new EventSource(eventSourceUrl);
+      var isRendering = false;
+
+      source.onmessage = function(ev) {
+        var msg = JSON.parse(ev.data);
+        if (msg.updating) {
+          isRendering = true;
+          document.title = '(Rendering) ' + document.title;
+        } else {
+          isRendering = false;
+          document.title = initialTitle;
+          contentElement.innerHTML = msg.content;
+          showCanonicalImages();
+        }
+      }
+
+      source.onerror = function(e) {
+        if (e.readyState === EventSource.CLOSED && isRendering) {
+          isRendering = false;
+          document.title = initialTitle;
+        }
+      }
+    }
+
+    window.onhashchange = function() {
+      scrollToHash();
+    }
+
+    window.onload = function() {
+      scrollToHash();
+    }
+
+    showCanonicalImages();
+
+    var autorefreshUrl = document.getElementById('preview-page').getAttribute('data-autorefresh-url');
+    if (autorefreshUrl) {
+      autorefreshContent(autorefreshUrl);
+    }
+  </script>
+
+</body></html>
